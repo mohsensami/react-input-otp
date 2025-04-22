@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import { usePinCode } from "./lib/usePinCode";
-// import './App.css';
 
 const App: React.FC = () => {
   const { getInputProps, otpValues } = usePinCode({

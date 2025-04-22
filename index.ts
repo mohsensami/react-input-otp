@@ -1,1 +1,1 @@
-export { Modal } from './src/lib';
+export { usePinCode } from "./src/lib";
