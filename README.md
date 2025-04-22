@@ -1,94 +1,149 @@
-# React Input OTP
+# @mohsensami/react-pin-code
 
-A customizable modal component built with React and TypeScript. The component uses CSS Modules for styling.
+A lightweight, flexible, and customizable React hook for handling PIN code inputs with TypeScript support. Perfect for OTP (One-Time Password), verification codes, and any multi-input numeric sequences.
 
-## Manual Setup
+## ✨ Features
 
-1- Add the Modal Component Files
+- 🎯 TypeScript support out of the box
+- 🔄 Automatic focus management
+- ⌨️ Keyboard navigation support
+- 🎨 Fully customizable styling
+- 📱 Mobile-friendly
+- ⚡ Zero dependencies
+- 🛡️ Input validation
 
-- Modal.tsx
-- Modal.module.css
-- App.tsx (Example usage)
-- App.css (Optional, for styling the example)
+## 📦 Installation
 
-2- Ensure your project supports CSS Modules. This can typically be done by configuring your build tool (e.g., Webpack or Create React App).
-
-## Demo
-
-<div align="center">
-    <img src="https://github.com/mrmohsensami/react-modal/raw/main/video.gif" width="">
-</div>
-
-## Installation
-
-To use the Modal component, you need to have a React environment set up. You can then add the Modal component files to your project.
-
-The package can be installed via [npm](https://github.com/npm/cli):
-
-```
-npm install modal-react
+```bash
+npm install @mohsensami/react-pin-code
+# or
+yarn add @mohsensami/react-pin-code
+# or
+pnpm add @mohsensami/react-pin-code
 ```
 
-## Usage
+## 🚀 Quick Start
 
-React Component:
+```tsx
+import { usePinCode } from "@mohsensami/react-pin-code";
 
-```javascript
-import React, { useState } from "react";
-import Modal from "Modal-react";
-
-const App: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+const MyComponent = () => {
+  const { otpValues, getInputProps } = usePinCode({
+    inputs: [
+      { name: "otp1", length: 4 },
+      { name: "otp2", length: 6 },
+    ],
+  });
 
   return (
-    <div className="App">
-      <h1>My App</h1>
-      <button onClick={openModal}>Open Modal</button>
-      <Modal
-        isOpen={isModalOpen}
-        title="My Modal"
-        onClose={closeModal}
-        footer={<button onClick={closeModal}>Close</button>}
-        animationName="bounceInDown"
-        animateDuration="0.4"
-      >
-        <p>This is the modal content.</p>
-      </Modal>
+    <div>
+      {/* First OTP input group */}
+      <div>
+        {[...Array(4)].map((_, index) => (
+          <input key={index} type="text" {...getInputProps(index)} />
+        ))}
+      </div>
+
+      {/* Second OTP input group */}
+      <div>
+        {[...Array(6)].map((_, index) => (
+          <input key={index} type="text" {...getInputProps(index + 4)} />
+        ))}
+      </div>
+
+      {/* Access values */}
+      <pre>{JSON.stringify(otpValues, null, 2)}</pre>
     </div>
   );
 };
-
-export default App;
 ```
 
-## Props
+## 📖 API Reference
 
-Here are the props that can be passed to the `<Modal />` component:
+### usePinCode
 
-| Name              | Type         | Required | Description                                                                                                                                                                                    |
-| :---------------- | :----------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `isOpen`          | `boolean`    | True     | Determines whether the modal is visible or not.                                                                                                                                                |
-| `title`           | `string`     | False    | The title of the modal, displayed in the header.                                                                                                                                               |
-| `children`        | `ReactNode`  | False    | The content to display inside the modal.                                                                                                                                                       |
-| `onClose`         | `() => void` | False    | Function to call when the modal is requested to be closed.                                                                                                                                     |
-| `footer`          | `ReactNode`  | False    | (optional): The content to display in the modal footer.                                                                                                                                        |
-| `animationName`   | `string`     | True     | The name of the animation to use for the modal. Possible values include: 'fadeIn', 'fadeOut', 'slideInLeft', 'slideInRight', 'slideOutLeft', 'slideOutRight', and other valid animation names. |
-| `animateDuration` | `string`     | False    | You can update the duration of animation. (Default is 0.3s)                                                                                                                                    |
+A hook that manages multiple PIN code inputs.
 
-- [CSS Animation](https://animate.style/)
+#### Parameters
 
-## Authors
+```typescript
+interface InputConfig {
+  name: string; // Unique identifier for the input group
+  length: number; // Number of digits in the PIN code
+}
 
-- [@mohsensami](https://github.com/mohsensami)
+interface UsePinCodeProps {
+  inputs: InputConfig[]; // Array of input configurations
+}
+```
 
-## Contributing
+#### Returns
 
-If you want to contribute to this project and make it better, your help is very welcome. Create an issue or submit a pull request.
+```typescript
+{
+  otpValues: Record<string, string>; // Current values of all input groups
+  getInputProps: (index: number) => PinInputProps; // Function to get input props
+}
+```
+
+### PinInputProps
+
+Properties that should be spread onto your input elements.
+
+```typescript
+interface PinInputProps {
+  value: string;
+  name: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  ref: (el: HTMLInputElement | null) => void;
+  maxLength: number;
+}
+```
+
+## 🎨 Styling Example
+
+```tsx
+const StyledPinInput = () => {
+  const { getInputProps } = usePinCode({
+    inputs: [{ name: "otp", length: 6 }],
+  });
+
+  return (
+    <div style={{ display: "flex", gap: "8px" }}>
+      {[...Array(6)].map((_, index) => (
+        <input
+          key={index}
+          type="text"
+          {...getInputProps(index)}
+          style={{
+            width: "40px",
+            height: "40px",
+            textAlign: "center",
+            fontSize: "20px",
+            borderRadius: "8px",
+            border: "2px solid #ccc",
+            outline: "none",
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+```
+
+## 🔑 Features in Detail
+
+- **Automatic Focus Management**: When a digit is entered, focus automatically moves to the next input
+- **Backspace Support**: Pressing backspace on an empty input focuses the previous input
+- **Input Validation**: Only numeric values are accepted
+- **Multiple Input Groups**: Support for multiple independent PIN code groups
+- **TypeScript Support**: Full type safety and autocompletion
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/mohsensami/react-pin-code/issues).
+
+## 📝 License
+
+MIT © [Mohsen Sami](https://github.com/mohsensami)
