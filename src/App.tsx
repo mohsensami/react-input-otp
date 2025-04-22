@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { usePinCode } from "./lib/hooks/usePinCode";
+import { usePinCode } from "./lib/usePinCode";
 // import './App.css';
 
 const App: React.FC = () => {

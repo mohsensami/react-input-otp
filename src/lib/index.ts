@@ -1,1 +1,1 @@
-export { Modal } from './Modal';
+export { usePinCode } from "./usePinCode";
