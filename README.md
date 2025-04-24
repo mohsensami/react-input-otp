@@ -30,29 +30,48 @@ import { usePinCode } from "@mohsensami/react-pin-code";
 const MyComponent = () => {
   const { otpValues, getInputProps } = usePinCode({
     inputs: [
-      { name: "otp1", length: 4 },
-      { name: "otp2", length: 6 },
+      { name: "otp1", length: 3 },
+      { name: "otp2", length: 2 },
+      { name: "otp3", length: 3 },
     ],
   });
 
   return (
     <div>
-      {/* First OTP input group */}
       <div>
-        {[...Array(4)].map((_, index) => (
-          <input key={index} type="text" {...getInputProps(index)} />
-        ))}
+        <input
+          type="text"
+          className="form-control text-center"
+          dir="ltr"
+          {...getInputProps(0)}
+        />
       </div>
 
-      {/* Second OTP input group */}
       <div>
-        {[...Array(6)].map((_, index) => (
-          <input key={index} type="text" {...getInputProps(index + 4)} />
-        ))}
+        <span className="h3">-</span>
       </div>
 
-      {/* Access values */}
-      <pre>{JSON.stringify(otpValues, null, 2)}</pre>
+      <div>
+        <input
+          type="text"
+          className="form-control text-center"
+          dir="ltr"
+          {...getInputProps(1)}
+        />
+      </div>
+
+      <div>
+        <span className="h3">+</span>
+      </div>
+
+      <div>
+        <input
+          type="text"
+          className="form-control text-center"
+          dir="ltr"
+          {...getInputProps(2)}
+        />
+      </div>
     </div>
   );
 };

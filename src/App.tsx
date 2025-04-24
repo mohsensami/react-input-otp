@@ -1,12 +1,12 @@
 import React from "react";
 import { usePinCode } from "./lib/usePinCode";
 
-const App: React.FC = () => {
+const MyComponent: React.FC = () => {
   const { getInputProps, otpValues } = usePinCode({
     inputs: [
-      { name: "input1", length: 3 },
-      { name: "input2", length: 1 },
-      { name: "input3", length: 2 },
+      { name: "otp1", length: 3 },
+      { name: "otp2", length: 2 },
+      { name: "otp3", length: 3 },
     ],
   });
 
@@ -53,4 +53,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default MyComponent;
