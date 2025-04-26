@@ -1,43 +1,70 @@
-# @mohsensami/react-pin-code
+# React Input OTP
 
-A lightweight, flexible, and customizable React hook for handling PIN code inputs with TypeScript support. Perfect for OTP (One-Time Password), verification codes, and any multi-input numeric sequences.
+A flexible and customizable React hook for handling multiple OTP (One-Time Password) inputs with advanced features.
 
-## ✨ Features
+## Features
 
-- 🎯 TypeScript support out of the box
-- 🔄 Automatic focus management
-- ⌨️ Keyboard navigation support
-- 🎨 Fully customizable styling
-- 📱 Mobile-friendly
-- ⚡ Zero dependencies
-- 🛡️ Input validation
+- 🔄 Multiple input fields support
+- ⚡ Automatic focus management
+- 🔢 Customizable input lengths
+- 💾 Default values support
+- ⌨️ Keyboard navigation (Backspace support)
+- 🎯 TypeScript support
 
-## 📦 Installation
+## Installation
 
 ```bash
-npm install @mohsensami/react-pin-code
+npm install react-input-otp
 # or
-yarn add @mohsensami/react-pin-code
-# or
-pnpm add @mohsensami/react-pin-code
+yarn add react-input-otp
 ```
 
-## 🚀 Quick Start
+## Usage
+
+### Basic Example
 
 ```tsx
-import { usePinCode } from "@mohsensami/react-pin-code";
+import React from "react";
+import { usePinCode } from "react-input-otp";
 
-const MyComponent = () => {
-  const { otpValues, getInputProps } = usePinCode({
+const OTPForm = () => {
+  const { getInputProps, otpValues } = usePinCode({
     inputs: [
-      { name: "otp1", length: 3 },
-      { name: "otp2", length: 2 },
-      { name: "otp3", length: 3 },
+      { name: "part1", length: 4 },
+      { name: "part2", length: 4 },
+      { name: "part3", length: 4 },
     ],
   });
 
   return (
-    <div>
+    <div className="otp-container">
+      <input {...getInputProps(0)} />
+      <span>-</span>
+      <input {...getInputProps(1)} />
+      <span>-</span>
+      <input {...getInputProps(2)} />
+    </div>
+  );
+};
+```
+
+### Advanced Example with Default Values
+
+```tsx
+import React from "react";
+import { usePinCode } from "react-input-otp";
+
+const AdvancedOTPForm = () => {
+  const { getInputProps, otpValues, setOtpValue } = usePinCode({
+    inputs: [
+      { name: "firstPart", length: 8, defaultValue: "First" },
+      { name: "secondPart", length: 10, defaultValue: "Second" },
+      { name: "thirdPart", length: 10, defaultValue: "Third" },
+    ],
+  });
+
+  return (
+    <div className="advanced-otp">
       <div>
         <input
           type="text"
@@ -48,7 +75,7 @@ const MyComponent = () => {
       </div>
 
       <div>
-        <span className="h3">-</span>
+        <span className="separator">-</span>
       </div>
 
       <div>
@@ -61,7 +88,7 @@ const MyComponent = () => {
       </div>
 
       <div>
-        <span className="h3">+</span>
+        <span className="separator">+</span>
       </div>
 
       <div>
@@ -77,92 +104,74 @@ const MyComponent = () => {
 };
 ```
 
-## 📖 API Reference
+## API Reference
 
-### usePinCode
+### usePinCode Hook
 
-A hook that manages multiple PIN code inputs.
+```typescript
+const { getInputProps, otpValues, setOtpValue } = usePinCode({
+  inputs: Array<{
+    name: string;
+    length: number;
+    defaultValue?: string;
+  }>;
+});
+```
 
 #### Parameters
 
-```typescript
-interface InputConfig {
-  name: string; // Unique identifier for the input group
-  length: number; // Number of digits in the PIN code
-}
-
-interface UsePinCodeProps {
-  inputs: InputConfig[]; // Array of input configurations
-}
-```
+- `inputs`: An array of input configurations
+  - `name`: Unique identifier for the input
+  - `length`: Maximum length of the input
+  - `defaultValue`: (Optional) Initial value for the input
 
 #### Returns
 
-```typescript
-{
-  otpValues: Record<string, string>; // Current values of all input groups
-  getInputProps: (index: number) => PinInputProps; // Function to get input props
+- `getInputProps`: Function that returns input props for a specific index
+- `otpValues`: Object containing current values of all inputs
+- `setOtpValue`: Function to manually set value for a specific input
+
+### Input Props
+
+The `getInputProps` function returns an object with the following properties:
+
+- `name`: Input name
+- `value`: Current input value
+- `maxLength`: Maximum allowed length
+- `onChange`: Change event handler
+- `onKeyDown`: Key down event handler
+- `ref`: Input reference
+
+## Styling
+
+You can style the inputs and separators using CSS. Here's an example:
+
+```css
+.otp-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.otp-container input {
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  font-size: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.otp-container .separator {
+  font-size: 24px;
+  color: #666;
 }
 ```
 
-### PinInputProps
+## Contributing
 
-Properties that should be spread onto your input elements.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-```typescript
-interface PinInputProps {
-  value: string;
-  name: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  ref: (el: HTMLInputElement | null) => void;
-  maxLength: number;
-}
-```
+## License
 
-## 🎨 Styling Example
-
-```tsx
-const StyledPinInput = () => {
-  const { getInputProps } = usePinCode({
-    inputs: [{ name: "otp", length: 6 }],
-  });
-
-  return (
-    <div style={{ display: "flex", gap: "8px" }}>
-      {[...Array(6)].map((_, index) => (
-        <input
-          key={index}
-          type="text"
-          {...getInputProps(index)}
-          style={{
-            width: "40px",
-            height: "40px",
-            textAlign: "center",
-            fontSize: "20px",
-            borderRadius: "8px",
-            border: "2px solid #ccc",
-            outline: "none",
-          }}
-        />
-      ))}
-    </div>
-  );
-};
-```
-
-## 🔑 Features in Detail
-
-- **Automatic Focus Management**: When a digit is entered, focus automatically moves to the next input
-- **Backspace Support**: Pressing backspace on an empty input focuses the previous input
-- **Input Validation**: Only numeric values are accepted
-- **Multiple Input Groups**: Support for multiple independent PIN code groups
-- **TypeScript Support**: Full type safety and autocompletion
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/mohsensami/react-pin-code/issues).
-
-## 📝 License
-
-MIT © [Mohsen Sami](https://github.com/mohsensami)
+MIT
