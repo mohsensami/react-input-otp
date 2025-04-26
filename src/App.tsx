@@ -2,11 +2,11 @@ import React from "react";
 import { usePinCode } from "./lib/usePinCode";
 
 const MyComponent: React.FC = () => {
-  const { getInputProps, otpValues } = usePinCode({
+  const { getInputProps, otpValues, setOtpValue } = usePinCode({
     inputs: [
-      { name: "otp1", length: 3 },
-      { name: "otp2", length: 2 },
-      { name: "otp3", length: 3 },
+      { name: "input1", length: 8, defaultValue: "First" },
+      { name: "input2", length: 10, defaultValue: "Second" },
+      { name: "input3", length: 10, defaultValue: "Third" },
     ],
   });
 

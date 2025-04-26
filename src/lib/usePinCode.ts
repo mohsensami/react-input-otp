@@ -1,8 +1,9 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 interface InputConfig {
   name: string;
   length: number;
+  defaultValue?: string;
 }
 
 interface UsePinCodeProps {
@@ -20,9 +21,10 @@ interface PinInputProps {
 
 export const usePinCode = ({ inputs }: UsePinCodeProps) => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
   const [otpValues, setOtpValues] = useState<Record<string, string>>(() =>
     inputs.reduce((acc, input) => {
-      acc[input.name] = "";
+      acc[input.name] = input.defaultValue ?? ""; // Use defaultValue if present
       return acc;
     }, {} as Record<string, string>)
   );
@@ -39,7 +41,7 @@ export const usePinCode = ({ inputs }: UsePinCodeProps) => {
       },
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
-        if (!/^[0-9]*$/.test(val)) return;
+        // if (!/^[0-9]*$/.test(val)) return;
 
         const trimmed = val.slice(0, length);
         setOtpValues((prev) => ({
@@ -61,8 +63,16 @@ export const usePinCode = ({ inputs }: UsePinCodeProps) => {
     };
   };
 
+  const setOtpValue = (name: string, value: string) => {
+    setOtpValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return {
     otpValues,
     getInputProps,
+    setOtpValue,
   };
 };
