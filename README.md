@@ -14,9 +14,9 @@ A flexible and customizable React hook for handling multiple OTP (One-Time Passw
 ## Installation
 
 ```bash
-npm install react-input-otp
+npm install @mohsensami/pin-code
 # or
-yarn add react-input-otp
+yarn add @mohsensami/pin-code
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ yarn add react-input-otp
 
 ```tsx
 import React from "react";
-import { usePinCode } from "react-input-otp";
+import { usePinCode } from "@mohsensami/pin-code";
 
 const OTPForm = () => {
   const { getInputProps, otpValues } = usePinCode({
@@ -52,7 +52,7 @@ const OTPForm = () => {
 
 ```tsx
 import React from "react";
-import { usePinCode } from "react-input-otp";
+import { usePinCode } from "@mohsensami/pin-code";
 
 const AdvancedOTPForm = () => {
   const { getInputProps, otpValues, setOtpValue } = usePinCode({
