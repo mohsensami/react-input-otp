@@ -1,7 +1,7 @@
 import React from "react";
-import { usePinCode } from "./lib/usePinCode";
+import usePinCode from "./components/hooks";
 
-const MyComponent: React.FC = () => {
+const App: React.FC = () => {
   const { getInputProps, otpValues, setOtpValue } = usePinCode({
     inputs: [
       { name: "input1", length: 8, defaultValue: "First" },
@@ -53,4 +53,4 @@ const MyComponent: React.FC = () => {
   );
 };
 
-export default MyComponent;
+export default App;

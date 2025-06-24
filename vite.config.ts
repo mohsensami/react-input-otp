@@ -2,14 +2,21 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import dts from "vite-plugin-dts";
 import { libInjectCss } from "vite-plugin-lib-inject-css";
-import path from "path";
+import { resolve } from "path";
 
 export default defineConfig({
+  plugins: [
+    react(),
+    libInjectCss(), // Add this plugin
+    dts({
+      insertTypesEntry: true,
+    }),
+  ],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "index.ts"),
-      name: "react-pin-code",
-      fileName: (format) => `index.${format}.js`,
+      entry: resolve(__dirname, "src/index.ts"),
+      name: "MohsensamiPinCode",
+      fileName: (format) => `pinCode.${format}.js`,
     },
     rollupOptions: {
       external: ["react", "react-dom"],
@@ -20,8 +27,5 @@ export default defineConfig({
         },
       },
     },
-    sourcemap: true,
-    emptyOutDir: true,
   },
-  plugins: [react(), dts(), libInjectCss()],
 });
