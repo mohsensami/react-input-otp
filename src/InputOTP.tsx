@@ -1,66 +1,87 @@
 import React, { useRef, useState } from "react";
 
-interface InputOTPProps {
-  fields: number;
-  charsPerField: number;
-  separator?: string;
+type PlateField =
+  | { type: "input"; length: number }
+  | { type: "static"; value: string };
+
+interface PlateInputProps {
+  fields: PlateField[];
+  onComplete?: (value: string) => void;
 }
 
-const InputOTP: React.FC<InputOTPProps> = ({
-  fields,
-  charsPerField,
-  separator = "-",
-}) => {
-  const [values, setValues] = useState<string[]>(Array(fields).fill(""));
-  const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
+const PlateInput: React.FC<PlateInputProps> = ({ fields, onComplete }) => {
+  const inputIndexes = fields
+    .map((field, idx) => (field.type === "input" ? idx : null))
+    .filter((i): i is number => i !== null);
 
-  const handleChange = (value: string, index: number) => {
-    if (value.length > charsPerField) return;
+  const [values, setValues] = useState<string[]>(inputIndexes.map(() => ""));
+
+  const refs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const focusNext = (currentIdx: number) => {
+    const nextIdx = currentIdx + 1;
+    if (nextIdx < refs.current.length) {
+      refs.current[nextIdx]?.focus();
+    }
+  };
+
+  const handleChange = (val: string, idx: number) => {
+    const maxLength = (fields[inputIndexes[idx]] as any).length;
+    if (val.length > maxLength) return;
 
     const newValues = [...values];
-    newValues[index] = value;
+    newValues[idx] = val;
     setValues(newValues);
 
-    // Move to next input if filled
-    if (value.length === charsPerField && index < fields - 1) {
-      inputsRef.current[index + 1]?.focus();
+    if (val.length === maxLength) {
+      if (idx === values.length - 1) {
+        // آخرین فیلد پر شد
+        onComplete?.(newValues.join(""));
+      } else {
+        focusNext(idx);
+      }
     }
+  };
 
-    // If last input filled completely
-    if (index === fields - 1 && value.length === charsPerField) {
-      console.log("Full Input:", newValues.join(""));
+  const handleKeyDown = (e: React.KeyboardEvent, idx: number) => {
+    if (e.key === "Backspace" && values[idx] === "" && idx > 0) {
+      refs.current[idx - 1]?.focus();
     }
   };
 
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    if (e.key === "Backspace" && values[index] === "" && index > 0) {
-      inputsRef.current[index - 1]?.focus();
-    }
-  };
+  let inputCounter = 0;
 
   return (
-    <div className="flex items-center gap-2">
-      {Array.from({ length: fields }, (_, i) => (
-        <React.Fragment key={i}>
+    <div className="flex items-center gap-2 rtl">
+      {fields.map((field, i) => {
+        if (field.type === "static") {
+          return (
+            <span key={i} className="text-lg font-bold">
+              {field.value}
+            </span>
+          );
+        }
+
+        const inputIdx = inputCounter++;
+        return (
           <input
+            key={i}
             ref={(el) => {
-              inputsRef.current[i] = el;
+              refs.current[inputIdx] = el;
             }}
             type="text"
-            maxLength={charsPerField}
-            value={values[i]}
-            onChange={(e) => handleChange(e.target.value.toUpperCase(), i)}
-            onKeyDown={(e) => handleKeyDown(e, i)}
-            className="w-12 h-12 text-center border border-gray-400 rounded text-lg uppercase"
+            maxLength={field.length}
+            value={values[inputIdx]}
+            onChange={(e) =>
+              handleChange(e.target.value.toUpperCase(), inputIdx)
+            }
+            onKeyDown={(e) => handleKeyDown(e, inputIdx)}
+            className="w-14 h-12 text-center border border-gray-400 rounded text-lg uppercase"
           />
-          {i < fields - 1 && <span className="text-xl">{separator}</span>}
-        </React.Fragment>
-      ))}
+        );
+      })}
     </div>
   );
 };
 
-export default InputOTP;
+export default PlateInput;
