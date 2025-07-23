@@ -1,55 +1,77 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 
 type PlateField =
-  | { type: "input"; length: number }
-  | { type: "static"; value: string };
+  | {
+      type: "input";
+      name: string;
+      length: number;
+      defaultValue?: string;
+    }
+  | {
+      type: "static";
+      value: string;
+    };
 
 interface PlateInputProps {
   fields: PlateField[];
+  register?: (name: string) => any; // react-hook-form register
   onComplete?: (value: string) => void;
+  controlValues?: Record<string, string>; // for controlled input values from RHF
+  onChange?: (name: string, value: string) => void;
 }
 
-const PlateInput: React.FC<PlateInputProps> = ({ fields, onComplete }) => {
-  const inputIndexes = fields
-    .map((field, idx) => (field.type === "input" ? idx : null))
-    .filter((i): i is number => i !== null);
-
-  const [values, setValues] = useState<string[]>(inputIndexes.map(() => ""));
-
+const PlateInput: React.FC<PlateInputProps> = ({
+  fields,
+  register,
+  onComplete,
+  controlValues,
+  onChange,
+}) => {
   const refs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const focusNext = (currentIdx: number) => {
-    const nextIdx = currentIdx + 1;
-    if (nextIdx < refs.current.length) {
-      refs.current[nextIdx]?.focus();
+  const inputFields = fields.filter((f) => f.type === "input") as Extract<
+    PlateField,
+    { type: "input" }
+  >[];
+
+  const focusNext = (index: number) => {
+    if (index + 1 < refs.current.length) {
+      refs.current[index + 1]?.focus();
     }
   };
 
-  const handleChange = (val: string, idx: number) => {
-    const maxLength = (fields[inputIndexes[idx]] as any).length;
-    if (val.length > maxLength) return;
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: Extract<PlateField, { type: "input" }>,
+    index: number
+  ) => {
+    const val = e.target.value.toUpperCase().slice(0, field.length);
+    onChange?.(field.name, val);
 
-    const newValues = [...values];
-    newValues[idx] = val;
-    setValues(newValues);
-
-    if (val.length === maxLength) {
-      if (idx === values.length - 1) {
-        // آخرین فیلد پر شد
-        onComplete?.(newValues.join(""));
+    if (val.length === field.length) {
+      if (index === inputFields.length - 1) {
+        const final = inputFields
+          .map((f) => controlValues?.[f.name] ?? f.defaultValue ?? "")
+          .join("");
+        onComplete?.(final);
       } else {
-        focusNext(idx);
+        focusNext(index);
       }
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent, idx: number) => {
-    if (e.key === "Backspace" && values[idx] === "" && idx > 0) {
-      refs.current[idx - 1]?.focus();
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const field = inputFields[index];
+    const val = controlValues?.[field.name] ?? field.defaultValue ?? "";
+    if (e.key === "Backspace" && val === "" && index > 0) {
+      refs.current[index - 1]?.focus();
     }
   };
 
-  let inputCounter = 0;
+  let inputIndex = 0;
 
   return (
     <div className="flex items-center gap-2 rtl">
@@ -62,20 +84,22 @@ const PlateInput: React.FC<PlateInputProps> = ({ fields, onComplete }) => {
           );
         }
 
-        const inputIdx = inputCounter++;
+        const value = controlValues?.[field.name] ?? field.defaultValue ?? "";
+
+        const currentInputIndex = inputIndex++;
+
         return (
           <input
             key={i}
             ref={(el) => {
-              refs.current[inputIdx] = el;
+              refs.current[currentInputIndex] = el;
             }}
             type="text"
             maxLength={field.length}
-            value={values[inputIdx]}
-            onChange={(e) =>
-              handleChange(e.target.value.toUpperCase(), inputIdx)
-            }
-            onKeyDown={(e) => handleKeyDown(e, inputIdx)}
+            {...(register ? register(field.name) : {})}
+            value={value}
+            onChange={(e) => handleChange(e, field, currentInputIndex)}
+            onKeyDown={(e) => handleKeyDown(e, currentInputIndex)}
             className="w-14 h-12 text-center border border-gray-400 rounded text-lg uppercase"
           />
         );
