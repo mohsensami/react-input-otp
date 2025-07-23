@@ -1,39 +1,31 @@
 {
-  "name": "@mohsensami/pin-code",
-  "version": "0.0.2",
-  "private": false,
+  "name": "@mohsensami/input-otp",
+  "version": "0.0.1",
   "description": "",
   "type": "module",
-  "main": "./dist/pinCode.umd.js",
-  "module": "./dist/pinCode.es.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/pinCode.es.js",
-      "require": "./dist/pinCode.umd.js"
-    }
-  },
+  "private": false,
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "index.d.ts",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "prepare": "npm run build"
+    "build": "rollup -c"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
-    "@types/react": "^19.1.2",
-    "@types/react-dom": "^19.1.2",
-    "@vitejs/plugin-react-swc": "^3.9.0",
-    "typescript": "^5.2.2",
-    "vite": "^6.3.5",
-    "vite-plugin-dts": "^3.9.1",
-    "vite-plugin-lib-inject-css": "^2.2.2"
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/jalaali-js": "^1.2.0",
+    "@types/react": "^19.1.8",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "rollup": "^3.0.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.2",
+    "tslib": "^2.8.1",
+    "typescript": "^5.0.0"
   }
 }
