@@ -5,7 +5,7 @@ import typescript from "@rollup/plugin-typescript";
 import postcss from "rollup-plugin-postcss";
 
 export default {
-  input: "src/InputOTP.tsx",
+  input: "src/useInputOTP.ts",
   output: [
     {
       file: "dist/index.js",

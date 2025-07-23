@@ -1,1 +1,1 @@
-export * from "./src/InputOTP";
+export * from "./src/useInputOTP";
