@@ -21,6 +21,7 @@ export default function PlateFormExample() {
         setValue("part1", String(data.id));
       });
     console.log("values", values);
+    console.log("values", values);
   }, []);
 
   return (
