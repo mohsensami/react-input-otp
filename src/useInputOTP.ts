@@ -6,27 +6,24 @@ type InputField = {
   defaultValue?: string;
 };
 
-interface UseInputOTPOptions {
+interface UseOTPFormOptions {
   inputs: InputField[];
-  onComplete?: (fullValue: string) => void;
+  handleSubmit?: (fullValue: string) => void;
 }
 
-export function useInputOTP({ inputs, onComplete }: UseInputOTPOptions) {
-  const [otpValues, setOtpValues] = useState<Record<string, string>>(() =>
+export function useOTPForm({ inputs, handleSubmit }: UseOTPFormOptions) {
+  const [values, setValuesState] = useState<Record<string, string>>(() =>
     Object.fromEntries(inputs.map((f) => [f.name, f.defaultValue ?? ""]))
   );
 
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  const setValues = (
-    valuesOrName: Record<string, string> | string,
-    value?: string
-  ) => {
-    if (typeof valuesOrName === "string" && value !== undefined) {
-      setOtpValues((prev) => ({ ...prev, [valuesOrName]: value }));
-    } else if (typeof valuesOrName === "object") {
-      setOtpValues((prev) => ({ ...prev, ...valuesOrName }));
-    }
+  const setValue = (name: string, value: string) => {
+    setValuesState((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const reset = (newValues: Record<string, string>) => {
+    setValuesState((prev) => ({ ...prev, ...newValues }));
   };
 
   const focusNext = (currentName: string) => {
@@ -37,9 +34,9 @@ export function useInputOTP({ inputs, onComplete }: UseInputOTPOptions) {
     }
   };
 
-  const getInputProps = (name: string) => {
+  const register = (name: string) => {
     const field = inputs.find((i) => i.name === name);
-    if (!field) throw new Error(`Input "${name}" not found`);
+    if (!field) throw new Error(`Field "${name}" not found`);
 
     return {
       name,
@@ -47,11 +44,11 @@ export function useInputOTP({ inputs, onComplete }: UseInputOTPOptions) {
         inputRefs.current[name] = el;
       },
       maxLength: field.length,
-      value: otpValues[name] || "",
+      value: values[name] || "",
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value.toUpperCase().slice(0, field.length);
 
-        setOtpValues((prev) => {
+        setValuesState((prev) => {
           const newState = { ...prev, [name]: val };
 
           const allFilled = inputs.every(
@@ -60,7 +57,7 @@ export function useInputOTP({ inputs, onComplete }: UseInputOTPOptions) {
 
           if (allFilled) {
             const full = inputs.map((f) => newState[f.name]).join("");
-            onComplete?.(full);
+            handleSubmit?.(full);
           }
 
           return newState;
@@ -71,7 +68,7 @@ export function useInputOTP({ inputs, onComplete }: UseInputOTPOptions) {
         }
       },
       onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Backspace" && otpValues[name] === "") {
+        if (e.key === "Backspace" && values[name] === "") {
           const index = inputs.findIndex((f) => f.name === name);
           if (index > 0) {
             const prevName = inputs[index - 1].name;
@@ -82,9 +79,12 @@ export function useInputOTP({ inputs, onComplete }: UseInputOTPOptions) {
     };
   };
 
+  const watch = () => values;
+
   return {
-    getInputProps,
-    otpValues,
-    setValues,
+    register,
+    watch,
+    setValue,
+    reset,
   };
 }
