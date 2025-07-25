@@ -1,4 +1,5 @@
 import { useInputOTP } from "@mohsensami/input-otp";
+import { useEffect } from "react";
 
 export default function PlateFormExample() {
   const { getInputProps, otpValues, setValues } = useInputOTP({
@@ -11,6 +12,14 @@ export default function PlateFormExample() {
       console.log("پلاک کامل:", val);
     },
   });
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/todos/1")
+      .then((res) => res.json())
+      .then((data) => {
+        setValues("part1", String(data.id + 10));
+      });
+  }, []);
 
   return (
     <div className="flex items-center gap-2 rtl">

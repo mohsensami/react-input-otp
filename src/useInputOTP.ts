@@ -18,8 +18,15 @@ export function useInputOTP({ inputs, onComplete }: UseInputOTPOptions) {
 
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  const setValues = (values: Record<string, string>) => {
-    setOtpValues((prev) => ({ ...prev, ...values }));
+  const setValues = (
+    valuesOrName: Record<string, string> | string,
+    value?: string
+  ) => {
+    if (typeof valuesOrName === "string" && value !== undefined) {
+      setOtpValues((prev) => ({ ...prev, [valuesOrName]: value }));
+    } else if (typeof valuesOrName === "object") {
+      setOtpValues((prev) => ({ ...prev, ...valuesOrName }));
+    }
   };
 
   const focusNext = (currentName: string) => {
