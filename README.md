@@ -15,13 +15,13 @@ A lightweight and customizable React hook for handling OTP (One-Time Password) i
 ## Installation
 
 ```bash
-npm install react-input-otp
+npm install @mohsensami/input-otp
 ```
 
 ## Quick Start
 
 ```tsx
-import { useOTPForm } from "react-input-otp";
+import { useOTPForm } from "@mohsensami/input-otp";
 
 function OTPForm() {
   const { register, watch } = useOTPForm({
@@ -91,7 +91,7 @@ The main hook that manages OTP input state and behavior.
 ### Basic OTP Input
 
 ```tsx
-import { useOTPForm } from "react-input-otp";
+import { useOTPForm } from "@mohsensami/input-otp";
 
 function BasicOTP() {
   const { register, watch } = useOTPForm({
@@ -134,7 +134,7 @@ function BasicOTP() {
 ### Multiple OTP Sections
 
 ```tsx
-import { useOTPForm } from "react-input-otp";
+import { useOTPForm } from "@mohsensami/input-otp";
 
 function MultiSectionOTP() {
   const { register, watch, setValue } = useOTPForm({
@@ -174,7 +174,7 @@ function MultiSectionOTP() {
 ### With Form Reset
 
 ```tsx
-import { useOTPForm } from "react-input-otp";
+import { useOTPForm } from "@mohsensami/input-otp";
 
 function OTPWithReset() {
   const { register, reset } = useOTPForm({
