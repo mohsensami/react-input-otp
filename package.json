@@ -1,6 +1,6 @@
 {
   "name": "@mohsensami/input-otp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight and customizable React hook for handling OTP (One-Time Password) input forms with automatic focus management and validation.",
   "type": "module",
   "private": false,
