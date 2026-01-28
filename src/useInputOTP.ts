@@ -22,15 +22,23 @@ export function useOTPForm({ inputs, handleSubmit }: UseOTPFormOptions) {
     setValuesState((prev) => ({ ...prev, [name]: value }));
   };
 
-  const reset = (newValues: Record<string, string>) => {
-    setValuesState((prev) => ({ ...prev, ...newValues }));
+  const reset = (newValues: Record<string, string> = {}) => {
+    setValuesState(
+      Object.fromEntries(inputs.map((f) => [f.name, newValues[f.name] ?? ""]))
+    );
   };
 
   const focusNext = (currentName: string) => {
     const index = inputs.findIndex((i) => i.name === currentName);
     if (index >= 0 && index < inputs.length - 1) {
-      const next = inputs[index + 1].name;
-      inputRefs.current[next]?.focus();
+      inputRefs.current[inputs[index + 1].name]?.focus();
+    }
+  };
+
+  const focusPrev = (currentName: string) => {
+    const index = inputs.findIndex((i) => i.name === currentName);
+    if (index > 0) {
+      inputRefs.current[inputs[index - 1].name]?.focus();
     }
   };
 
@@ -44,23 +52,23 @@ export function useOTPForm({ inputs, handleSubmit }: UseOTPFormOptions) {
         inputRefs.current[name] = el;
       },
       maxLength: field.length,
-      value: values[name] || "",
+      value: values[name] ?? "",
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value.toUpperCase().slice(0, field.length);
 
         setValuesState((prev) => {
-          const newState = { ...prev, [name]: val };
+          const next = { ...prev, [name]: val };
 
           const allFilled = inputs.every(
-            (f) => newState[f.name].length === f.length
+            (f) => next[f.name].length === f.length
           );
 
           if (allFilled) {
-            const full = inputs.map((f) => newState[f.name]).join("");
-            handleSubmit?.(full);
+            const fullValue = inputs.map((f) => next[f.name]).join("");
+            handleSubmit?.(fullValue);
           }
 
-          return newState;
+          return next;
         });
 
         if (val.length === field.length) {
@@ -69,11 +77,7 @@ export function useOTPForm({ inputs, handleSubmit }: UseOTPFormOptions) {
       },
       onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Backspace" && values[name] === "") {
-          const index = inputs.findIndex((f) => f.name === name);
-          if (index > 0) {
-            const prevName = inputs[index - 1].name;
-            inputRefs.current[prevName]?.focus();
-          }
+          focusPrev(name);
         }
       },
     };
@@ -81,9 +85,15 @@ export function useOTPForm({ inputs, handleSubmit }: UseOTPFormOptions) {
 
   const watch = () => values;
 
+  const getValues = (name?: string) => {
+    if (!name) return values;
+    return values[name];
+  };
+
   return {
     register,
     watch,
+    getValues,
     setValue,
     reset,
   };
