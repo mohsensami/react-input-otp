@@ -137,7 +137,7 @@ function BasicOTP() {
 import { useOTPForm } from "@mohsensami/input-otp";
 
 function MultiSectionOTP() {
-  const { register, watch, setValue } = useOTPForm({
+  const { register, watch, setValue, getValues } = useOTPForm({
     inputs: [
       { name: "section1", length: 4, defaultValue: "1234" },
       { name: "section2", length: 4 },
@@ -145,10 +145,9 @@ function MultiSectionOTP() {
     ],
     handleSubmit: (fullOTP) => {
       console.log("Complete OTP:", fullOTP);
+      console.log(getValues());
     },
   });
-
-  const currentValues = watch();
 
   return (
     <div>
